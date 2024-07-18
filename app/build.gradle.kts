@@ -60,6 +60,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.bundles.compose)
     implementation(libs.hilt.android)
+    implementation(libs.bundles.coroutines)
+    implementation(libs.bundles.net)
 
     kapt(libs.hilt.compiler)
 
