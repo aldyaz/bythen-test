@@ -1,8 +1,12 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
+    alias(libs.plugins.buildConfig)
 }
 
 android {
@@ -53,6 +57,28 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+}
+
+buildConfig {
+    val props = loadPropertiesFile("local.properties")
+
+    packageName("com.aldyaz.bythenvideo")
+    useKotlinOutput()
+    
+    buildConfigField("String", "PRESET", "\"${props["PRESET"]}\"")
+    buildConfigField("String", "API_KEY", "\"${props["API_KEY"]}\"")
+}
+
+fun loadPropertiesFile(file: String): Map<*, *> {
+    val configPath = "../$file"
+    val props: Map<*, *> = if (file(configPath).exists()) {
+        Properties().apply {
+            load(FileInputStream(file(configPath)))
+        }
+    } else {
+        project.properties
+    }
+    return props
 }
 
 dependencies {
