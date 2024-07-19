@@ -1,5 +1,7 @@
 package com.aldyaz.bythenvideo.base.domain
 
+import com.aldyaz.bythenvideo.domain.exception.DomainException
+
 sealed class ResultState<out T> {
 
     data class Success<out T>(
@@ -7,7 +9,7 @@ sealed class ResultState<out T> {
     ) : ResultState<T>()
 
     data class Error(
-        val exception: Exception
+        val exception: DomainException
     ) : ResultState<Nothing>()
 
 }

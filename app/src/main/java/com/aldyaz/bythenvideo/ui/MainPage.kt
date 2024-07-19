@@ -4,19 +4,11 @@ import android.Manifest
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FileUpload
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +17,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,6 +26,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aldyaz.bythenvideo.R
 import com.aldyaz.bythenvideo.presentation.MainViewModel
 import com.aldyaz.bythenvideo.presentation.model.UploadVideoIntent
+import com.aldyaz.bythenvideo.presentation.model.UploadVideoState
+import com.aldyaz.bythenvideo.ui.component.UploadPlaceholder
 import com.aldyaz.bythenvideo.utils.createVideoFile
 import com.aldyaz.bythenvideo.utils.getUri
 
@@ -48,9 +41,8 @@ fun MainPage() {
     val captureVideoLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CaptureVideo(),
         onResult = { isSuccessRecord ->
-            viewModel.onIntentReceived(UploadVideoIntent.OnSuccessRecordVideo(isSuccessRecord))
             if (isSuccessRecord) {
-                Toast.makeText(context, "Success record video!", Toast.LENGTH_SHORT).show()
+                viewModel.onIntentReceived(UploadVideoIntent.Submit(videoFile))
             } else {
                 Toast.makeText(context, "Failed record video!", Toast.LENGTH_SHORT).show()
             }
@@ -68,24 +60,22 @@ fun MainPage() {
     )
 
     MainScaffold(
+        uiState = uiState,
         onClickUpload = {
             permissionLauncher.launch(Manifest.permission.CAMERA)
-        },
-        fileName = if (uiState.uploadVideoPresentationModel.isSuccessRecordVideo) {
-            videoFile.name
-        } else null
+        }
     )
 }
 
 @Composable
 fun MainScaffold(
-    onClickUpload: () -> Unit,
-    fileName: String?
+    uiState: UploadVideoState,
+    onClickUpload: () -> Unit
 ) {
     Scaffold { contentPadding ->
         MainContent(
+            uiState = uiState,
             onClickUpload = onClickUpload,
-            fileName = fileName,
             modifier = Modifier.padding(contentPadding)
         )
     }
@@ -93,8 +83,8 @@ fun MainScaffold(
 
 @Composable
 fun MainContent(
+    uiState: UploadVideoState,
     onClickUpload: () -> Unit,
-    fileName: String? = null,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -107,55 +97,15 @@ fun MainContent(
         Spacer(modifier = Modifier.height(30.dp))
         Text(text = stringResource(R.string.label_click_to_upload_video))
         Spacer(modifier = Modifier.height(16.dp))
-        UploadPlaceholder(
-            onClickUpload = onClickUpload,
-            fileName = fileName
-        )
-    }
-}
-
-@Composable
-fun UploadPlaceholder(
-    onClickUpload: () -> Unit,
-    modifier: Modifier = Modifier,
-    fileName: String? = null
-) {
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
-        border = BorderStroke(
-            width = 1.dp,
-            color = Color.Gray
-        ),
-        onClick = onClickUpload,
-        modifier = Modifier
-            .fillMaxWidth()
-            .then(modifier)
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-        ) {
-            if (fileName != null) {
-                Text(
-                    text = fileName,
-                    color = Color.Gray
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Filled.FileUpload,
-                    contentDescription = stringResource(R.string.label_tag_file_upload),
-                    tint = Color.Gray
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = stringResource(R.string.label_upload),
-                    color = Color.Gray
-                )
-            }
+        uiState.progressValue?.also {
+            UploadPlaceholder(
+                progressValue = it,
+                onClickUpload = {
+                    if (uiState.clickEnabled) {
+                        onClickUpload()
+                    }
+                }
+            )
         }
     }
 }
@@ -163,11 +113,10 @@ fun UploadPlaceholder(
 @Preview
 @Composable
 fun MainScaffoldPreview() {
-    MainScaffold(onClickUpload = { }, fileName = null)
-}
-
-@Preview
-@Composable
-fun UploadPlaceholderPreview() {
-    UploadPlaceholder(onClickUpload = {})
+    MainScaffold(
+        uiState = UploadVideoState.Initial.copy(
+            progressValue = 10
+        ),
+        onClickUpload = {}
+    )
 }

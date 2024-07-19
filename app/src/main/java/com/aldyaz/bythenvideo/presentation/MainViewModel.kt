@@ -3,6 +3,8 @@ package com.aldyaz.bythenvideo.presentation
 import androidx.lifecycle.viewModelScope
 import com.aldyaz.bythenvideo.base.domain.ResultState
 import com.aldyaz.bythenvideo.base.presentation.BaseViewModel
+import com.aldyaz.bythenvideo.datasource.upload.model.ProgressCallback
+import com.aldyaz.bythenvideo.domain.model.UploadVideoParam
 import com.aldyaz.bythenvideo.domain.usecase.UploadVideoUseCase
 import com.aldyaz.bythenvideo.presentation.model.UploadVideoIntent
 import com.aldyaz.bythenvideo.presentation.model.UploadVideoState
@@ -20,30 +22,51 @@ class MainViewModel @Inject constructor(
     private val uploadVideoUseCase: UploadVideoUseCase
 ) : BaseViewModel<UploadVideoIntent>() {
 
-    private val _uiState = MutableStateFlow(UploadVideoState.Default)
+    private val _uiState = MutableStateFlow(UploadVideoState.Initial)
     val uiState: StateFlow<UploadVideoState>
         get() = _uiState.asStateFlow()
 
     override fun onIntentReceived(intent: UploadVideoIntent) {
         when (intent) {
-            is UploadVideoIntent.OnSuccessRecordVideo -> {
+            is UploadVideoIntent.Submit -> uploadVideo(intent.file)
+        }
+    }
+
+    private fun uploadVideo(file: File) = viewModelScope.launch {
+        val result = uploadVideoUseCase(
+            UploadVideoParam(
+                file = file,
+                progressCallback = object : ProgressCallback {
+                    override fun onProgressUpdate(progress: Long) {
+                        _uiState.update {
+                            it.copy(
+                                progressValue = progress.toInt()
+                            )
+                        }
+                    }
+                }
+            )
+        )
+        when (result) {
+            is ResultState.Success -> {
                 _uiState.update {
                     it.copy(
+                        progressValue = 100,
                         uploadVideoPresentationModel = it.uploadVideoPresentationModel.copy(
-                            isSuccessRecordVideo = intent.isSuccess
+                            signature = result.data.signature
                         )
                     )
                 }
             }
 
-            is UploadVideoIntent.Submit -> {}
-        }
-    }
-
-    private fun uploadVideo(file: File) = viewModelScope.launch {
-        when (val result = uploadVideoUseCase(file)) {
-            is ResultState.Success -> {}
-            is ResultState.Error -> {}
+            is ResultState.Error -> {
+                _uiState.update {
+                    it.copy(
+                        progressValue = 100,
+                        errorMessage = result.exception.message
+                    )
+                }
+            }
         }
     }
 
