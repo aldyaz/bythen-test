@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Bythen Video</string>
+    <string name="label_tag_file_upload">file-upload</string>
+    <string name="label_upload">Upload</string>
+    <string name="label_click_to_upload_video">Click to upload video</string>
 </resources>
