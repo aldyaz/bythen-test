@@ -8,9 +8,9 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import javax.inject.Inject
 
-class UploadVideoCloudDataSourceImpl @Inject constructor(
+class UploadCloudDataSourceImpl @Inject constructor(
     private val service: UploadVideoService
-) : UploadVideoCloudDataSource {
+) : UploadCloudDataSource {
 
     override suspend fun upload(file: File): HttpSourceState<UploadVideoDto> {
         val payload = UploadVideoPayload()

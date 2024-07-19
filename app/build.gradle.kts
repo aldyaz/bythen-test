@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     kotlin("kapt")
+    alias(libs.plugins.composeCompiler)
     id("dagger.hilt.android.plugin")
     alias(libs.plugins.buildConfig)
 }
@@ -64,7 +65,7 @@ buildConfig {
 
     packageName("com.aldyaz.bythenvideo")
     useKotlinOutput()
-    
+
     buildConfigField("String", "PRESET", "\"${props["PRESET"]}\"")
     buildConfigField("String", "API_KEY", "\"${props["API_KEY"]}\"")
 }
