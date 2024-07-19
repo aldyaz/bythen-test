@@ -1,7 +1,9 @@
 package com.aldyaz.bythenvideo.di.module
 
 import com.aldyaz.bythenvideo.base.domain.CoroutinesContextProvider
+import com.aldyaz.bythenvideo.domain.repository.NetworkStateRepository
 import com.aldyaz.bythenvideo.domain.repository.UploadVideoRepository
+import com.aldyaz.bythenvideo.domain.usecase.NetworkStatusUseCase
 import com.aldyaz.bythenvideo.domain.usecase.UploadVideoUseCase
 import dagger.Module
 import dagger.Provides
@@ -23,6 +25,15 @@ class DomainModule {
         coroutinesContextProvider: CoroutinesContextProvider
     ): UploadVideoUseCase = UploadVideoUseCase(
         repository = repository,
+        coroutinesContextProvider = coroutinesContextProvider
+    )
+
+    @Provides
+    fun provideNetworkStatusUseCase(
+        repository: NetworkStateRepository,
+        coroutinesContextProvider: CoroutinesContextProvider
+    ): NetworkStatusUseCase = NetworkStatusUseCase(
+        networkStateRepository = repository,
         coroutinesContextProvider = coroutinesContextProvider
     )
 

@@ -1,5 +1,7 @@
 package com.aldyaz.bythenvideo.di.module
 
+import com.aldyaz.bythenvideo.datasource.connection.NetworkStateDataSource
+import com.aldyaz.bythenvideo.datasource.connection.NetworkStateDataSourceImpl
 import com.aldyaz.bythenvideo.datasource.upload.UploadCloudDataSource
 import com.aldyaz.bythenvideo.datasource.upload.UploadCloudDataSourceImpl
 import dagger.Binds
@@ -15,5 +17,10 @@ abstract class DataModule {
     abstract fun bindUploadCloudDataSource(
         impl: UploadCloudDataSourceImpl
     ): UploadCloudDataSource
+
+    @Binds
+    abstract fun bindNetworkStateDataSource(
+        impl: NetworkStateDataSourceImpl
+    ): NetworkStateDataSource
 
 }

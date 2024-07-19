@@ -1,5 +1,7 @@
 package com.aldyaz.bythenvideo.di.module
 
+import android.content.Context
+import android.net.ConnectivityManager
 import com.aldyaz.bythenvideo.BuildConfig
 import com.aldyaz.bythenvideo.datasource.remote.MainInterceptor
 import com.aldyaz.bythenvideo.datasource.upload.UploadVideoService
@@ -9,6 +11,7 @@ import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -20,6 +23,13 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 class NetworkModule {
+
+    @Provides
+    fun provideConnectivityManager(
+        @ApplicationContext context: Context
+    ): ConnectivityManager {
+        return context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    }
 
     @Provides
     fun provideGson(): Gson = Gson()
