@@ -1,5 +1,6 @@
 package com.aldyaz.bythenvideo.di.module
 
+import com.aldyaz.bythenvideo.BuildConfig
 import com.aldyaz.bythenvideo.datasource.remote.MainInterceptor
 import com.aldyaz.bythenvideo.datasource.upload.UploadVideoService
 import com.aldyaz.bythenvideo.di.qualifier.HttpLoggingInterceptorQualifier
@@ -52,7 +53,7 @@ class NetworkModule {
         gson: Gson
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("")
+            .baseUrl(BuildConfig.BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()

@@ -68,6 +68,7 @@ buildConfig {
 
     buildConfigField("String", "PRESET", "\"${props["PRESET"]}\"")
     buildConfigField("String", "API_KEY", "\"${props["API_KEY"]}\"")
+    buildConfigField("String", "BASE_URL", "\"${props["BASE_URL"]}\"")
 }
 
 fun loadPropertiesFile(file: String): Map<*, *> {
