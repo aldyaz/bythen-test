@@ -2,9 +2,8 @@ package com.aldyaz.bythenvideo.presentation.model
 
 data class UploadVideoState(
     val progressValue: Int? = null,
-    val errorMessage: String? = null,
-    val uploadVideoPresentationModel: UploadVideoPresentationModel = UploadVideoPresentationModel(),
-    val isNetworkConnected: Boolean = true
+    val error: Boolean = false,
+    val uploadVideoPresentationModel: UploadVideoPresentationModel = UploadVideoPresentationModel()
 ) {
 
     val uploadEligible = progressValue == null || progressValue == 100

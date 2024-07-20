@@ -1,6 +1,7 @@
 package com.aldyaz.bythenvideo.ui
 
 import android.Manifest
+import android.app.Activity
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aldyaz.bythenvideo.R
+import com.aldyaz.bythenvideo.di.entrypoint.MainPageEntryPoint
 import com.aldyaz.bythenvideo.presentation.MainViewModel
 import com.aldyaz.bythenvideo.presentation.model.UploadVideoIntent
 import com.aldyaz.bythenvideo.presentation.model.UploadVideoState
@@ -32,12 +35,24 @@ import com.aldyaz.bythenvideo.ui.component.NetworkIssueBottomSheet
 import com.aldyaz.bythenvideo.ui.component.UploadPlaceholder
 import com.aldyaz.bythenvideo.utils.createVideoFile
 import com.aldyaz.bythenvideo.utils.getUri
+import com.aldyaz.bythenvideo.utils.rememberIsInitialConnected
+import dagger.hilt.android.EntryPointAccessors
 
 @Composable
 fun MainPage() {
     val context = LocalContext.current
     val viewModel: MainViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val entryPoint = remember {
+        EntryPointAccessors.fromActivity(
+            context as Activity,
+            MainPageEntryPoint::class.java
+        )
+    }
+    val initialConnected by rememberIsInitialConnected(entryPoint.connectivityManager())
+    val isConnected by viewModel.isConnected.collectAsStateWithLifecycle(
+        initialValue = initialConnected
+    )
     val videoFile by remember { mutableStateOf(context.createVideoFile()) }
     val uri by remember { mutableStateOf(videoFile.getUri(context)) }
     val captureVideoLauncher = rememberLauncherForActivityResult(
@@ -63,6 +78,7 @@ fun MainPage() {
 
     MainScaffold(
         uiState = uiState,
+        isConnected = isConnected,
         onClickUpload = {
             permissionLauncher.launch(Manifest.permission.CAMERA)
         }
@@ -72,11 +88,13 @@ fun MainPage() {
 @Composable
 fun MainScaffold(
     uiState: UploadVideoState,
+    isConnected: Boolean,
     onClickUpload: () -> Unit
 ) {
     Scaffold { contentPadding ->
         MainContent(
             uiState = uiState,
+            isConnected = isConnected,
             onClickUpload = onClickUpload,
             modifier = Modifier.padding(contentPadding)
         )
@@ -86,6 +104,7 @@ fun MainScaffold(
 @Composable
 fun MainContent(
     uiState: UploadVideoState,
+    isConnected: Boolean,
     onClickUpload: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -109,12 +128,19 @@ fun MainContent(
             }
         )
 
-        if (!uiState.isNetworkConnected) {
-            NetworkIssueBottomSheet {}
+        if (!isConnected) {
+            Toast.makeText(LocalContext.current, "Network DISCONNECTED!", Toast.LENGTH_SHORT).show()
+            NetworkIssueBottomSheet(
+                onDismiss = {},
+                modifier = Modifier.navigationBarsPadding()
+            )
         }
 
-        if (!uiState.errorMessage.isNullOrEmpty()) {
-            ApiErrorBottomSheet {}
+        if (uiState.error) {
+            ApiErrorBottomSheet(
+                onDismiss = {},
+                modifier = Modifier.navigationBarsPadding()
+            )
         }
     }
 }
@@ -126,6 +152,7 @@ fun MainScaffoldPreview() {
         uiState = UploadVideoState.Initial.copy(
             progressValue = 10
         ),
+        isConnected = true,
         onClickUpload = {}
     )
 }

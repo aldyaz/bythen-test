@@ -12,9 +12,9 @@ import com.aldyaz.bythenvideo.presentation.model.UploadVideoIntent
 import com.aldyaz.bythenvideo.presentation.model.UploadVideoState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
@@ -27,21 +27,12 @@ class MainViewModel @Inject constructor(
 ) : BaseViewModel<UploadVideoIntent>() {
 
     private val _uiState = MutableStateFlow(UploadVideoState.Initial)
-    val uiState = combine(
-        _uiState,
-        networkStatusUseCase(Unit)
-    ) { state, networkResult ->
-        state.copy(
-            isNetworkConnected = when (networkResult) {
-                is ResultState.Success -> networkResult.data == NetworkStateDomainModel.Connected
-                is ResultState.Error -> false
-            }
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = UploadVideoState.Initial
-    )
+    val uiState: StateFlow<UploadVideoState>
+        get() = _uiState.asStateFlow()
+
+    val isConnected = networkStatusUseCase(Unit).map {
+        it is ResultState.Success && it.data == NetworkStateDomainModel.Connected
+    }
 
     override fun onIntentReceived(intent: UploadVideoIntent) {
         when (intent) {
@@ -52,7 +43,7 @@ class MainViewModel @Inject constructor(
     private fun uploadVideo(file: File) = viewModelScope.launch {
         _uiState.update {
             it.copy(
-                errorMessage = null
+                error = false
             )
         }
         val result = uploadVideoUseCase(
@@ -85,7 +76,7 @@ class MainViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         progressValue = 100,
-                        errorMessage = result.exception.message
+                        error = true
                     )
                 }
             }

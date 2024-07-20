@@ -30,7 +30,7 @@ class NetworkModule {
     fun provideConnectivityManager(
         @ApplicationContext context: Context
     ): ConnectivityManager {
-        return context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return context.getSystemService(ConnectivityManager::class.java)
     }
 
     @Provides

@@ -29,25 +29,29 @@ import com.aldyaz.bythenvideo.R
 
 @Composable
 fun ApiErrorBottomSheet(
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     InfoBottomSheetDialog(
         onDismiss = onDismiss,
-        icon = Icons.Filled.Error
+        icon = Icons.Filled.Error,
+        modifier = modifier
     ) {
         BottomSheetText(
-            title = stringResource(R.string.label_no_internet_connection_title),
-            description = stringResource(R.string.label_no_internet_connection_description)
+            title = stringResource(R.string.label_error),
+            description = stringResource(R.string.label_error_description)
         )
     }
 }
 
 @Composable
 fun NetworkIssueBottomSheet(
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     InfoBottomSheetDialog(
-        onDismiss = onDismiss
+        onDismiss = onDismiss,
+        modifier = modifier
     ) {
         BottomSheetText(
             title = stringResource(R.string.label_no_internet_connection_title),
@@ -59,6 +63,7 @@ fun NetworkIssueBottomSheet(
 @Composable
 fun InfoBottomSheetDialog(
     onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
     icon: ImageVector = Icons.Filled.NetworkCheck,
     additionalText: @Composable () -> Unit
 ) {
@@ -68,7 +73,8 @@ fun InfoBottomSheetDialog(
     }
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        sheetState = bottomSheetState
+        sheetState = bottomSheetState,
+        modifier = modifier
     ) {
         BottomSheetLayout(
             icon = icon,
