@@ -5,4 +5,6 @@
     <string name="label_click_to_upload_video">Click to record &amp; upload video</string>
     <string name="label_progress_animation">progress-animation</string>
     <string name="label_uploading">Uploading...</string>
+    <string name="label_no_internet_connection_title">No internet connection!</string>
+    <string name="label_no_internet_connection_description">Check your internet connection, then retry to upload.</string>
 </resources>

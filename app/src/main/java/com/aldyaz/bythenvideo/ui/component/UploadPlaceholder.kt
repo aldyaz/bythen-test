@@ -26,7 +26,8 @@ import com.aldyaz.bythenvideo.R
 
 @Composable
 fun UploadPlaceholder(
-    progressValue: Int,
+    uploadEligible: Boolean,
+    progressValue: Int?,
     onClickUpload: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -51,7 +52,7 @@ fun UploadPlaceholder(
                 .padding(16.dp)
                 .fillMaxSize()
         ) {
-            if (progressValue == 100) {
+            if (uploadEligible) {
                 Icon(
                     imageVector = Icons.Filled.FileUpload,
                     contentDescription = stringResource(R.string.label_tag_file_upload),
@@ -63,7 +64,9 @@ fun UploadPlaceholder(
                     color = Color.Gray
                 )
             } else {
-                UploadProgress(value = progressValue)
+                progressValue?.also {
+                    UploadProgress(value = it)
+                }
             }
         }
     }
@@ -73,6 +76,7 @@ fun UploadPlaceholder(
 @Composable
 fun UploadPlaceholderPreview() {
     UploadPlaceholder(
+        uploadEligible = false,
         onClickUpload = {},
         progressValue = 10
     )

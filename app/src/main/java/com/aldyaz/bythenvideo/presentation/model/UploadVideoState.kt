@@ -7,7 +7,7 @@ data class UploadVideoState(
     val isNetworkConnected: Boolean = false
 ) {
 
-    val clickEnabled = progressValue == null || progressValue == 100
+    val uploadEligible = progressValue == null || progressValue == 100
 
     companion object {
 

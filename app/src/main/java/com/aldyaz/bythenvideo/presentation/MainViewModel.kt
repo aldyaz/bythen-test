@@ -50,6 +50,11 @@ class MainViewModel @Inject constructor(
     }
 
     private fun uploadVideo(file: File) = viewModelScope.launch {
+        _uiState.update {
+            it.copy(
+                errorMessage = null
+            )
+        }
         val result = uploadVideoUseCase(
             UploadVideoParam(
                 file = file,

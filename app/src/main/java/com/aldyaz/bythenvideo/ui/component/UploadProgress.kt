@@ -30,7 +30,7 @@ fun UploadProgress(
             .then(modifier)
     ) {
         val animateProgress by animateFloatAsState(
-            targetValue = (value / 100).toFloat(),
+            targetValue = (value / 100.0).toFloat(),
             label = stringResource(R.string.label_progress_animation)
         )
         LinearProgressIndicator(
@@ -46,7 +46,7 @@ fun UploadProgress(
 @Composable
 fun UploadProgressPreview() {
     UploadProgress(
-        value = 80,
+        value = 50,
         modifier = Modifier.background(Color.White)
     )
 }

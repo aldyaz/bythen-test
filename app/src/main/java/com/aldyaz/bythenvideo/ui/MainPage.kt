@@ -27,6 +27,8 @@ import com.aldyaz.bythenvideo.R
 import com.aldyaz.bythenvideo.presentation.MainViewModel
 import com.aldyaz.bythenvideo.presentation.model.UploadVideoIntent
 import com.aldyaz.bythenvideo.presentation.model.UploadVideoState
+import com.aldyaz.bythenvideo.ui.component.ApiErrorBottomSheet
+import com.aldyaz.bythenvideo.ui.component.NetworkIssueBottomSheet
 import com.aldyaz.bythenvideo.ui.component.UploadPlaceholder
 import com.aldyaz.bythenvideo.utils.createVideoFile
 import com.aldyaz.bythenvideo.utils.getUri
@@ -97,15 +99,22 @@ fun MainContent(
         Spacer(modifier = Modifier.height(30.dp))
         Text(text = stringResource(R.string.label_click_to_upload_video))
         Spacer(modifier = Modifier.height(16.dp))
-        uiState.progressValue?.also {
-            UploadPlaceholder(
-                progressValue = it,
-                onClickUpload = {
-                    if (uiState.clickEnabled) {
-                        onClickUpload()
-                    }
+        UploadPlaceholder(
+            uploadEligible = uiState.uploadEligible,
+            progressValue = uiState.progressValue,
+            onClickUpload = {
+                if (uiState.uploadEligible) {
+                    onClickUpload()
                 }
-            )
+            }
+        )
+
+        if (!uiState.isNetworkConnected) {
+            NetworkIssueBottomSheet {}
+        }
+
+        if (!uiState.errorMessage.isNullOrEmpty()) {
+            ApiErrorBottomSheet {}
         }
     }
 }
