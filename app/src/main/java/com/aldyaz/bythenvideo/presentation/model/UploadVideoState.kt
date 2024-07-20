@@ -4,7 +4,7 @@ data class UploadVideoState(
     val progressValue: Int? = null,
     val errorMessage: String? = null,
     val uploadVideoPresentationModel: UploadVideoPresentationModel = UploadVideoPresentationModel(),
-    val isNetworkConnected: Boolean = false
+    val isNetworkConnected: Boolean = true
 ) {
 
     val uploadEligible = progressValue == null || progressValue == 100
