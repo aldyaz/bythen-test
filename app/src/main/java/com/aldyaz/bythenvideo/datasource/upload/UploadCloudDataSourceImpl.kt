@@ -30,7 +30,7 @@ class UploadCloudDataSourceImpl @Inject constructor(
             body = progressReqBody
         )
         val body = MultipartBody.Builder()
-//            .addFormDataPart(UPLOAD_PRESET, payload.uploadPreset)
+            .addFormDataPart(UPLOAD_PRESET, payload.uploadPreset)
             .addFormDataPart(PUBLIC_ID, payload.publicId)
             .addFormDataPart(API_KEY, payload.apiKey)
             .addPart(filePart)

@@ -48,7 +48,7 @@ fun SuccessUploadBottomSheet(
         iconTint = Color.Green,
         modifier = modifier
     ) {
-        val urlString = buildAnnotatedString {
+        val annotatedString = buildAnnotatedString {
             if (url.isNotEmpty()) {
                 pushStringAnnotation("url", url)
                 withStyle(style = SpanStyle(Color.Blue)) {
@@ -62,14 +62,21 @@ fun SuccessUploadBottomSheet(
         Text(text = stringResource(R.string.label_success_upload))
         Spacer(modifier = Modifier.height(8.dp))
         ClickableText(
-            text = urlString,
+            text = annotatedString,
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
                     onClickUrl(url)
                 }
-        ) {
-            onClickUrl(url)
+        ) { offset ->
+            val urlAnnotations = annotatedString.getStringAnnotations(
+                tag = "url",
+                start = offset,
+                end = offset
+            ).firstOrNull()
+            urlAnnotations?.also {
+                onClickUrl(it.item)
+            }
         }
     }
 }

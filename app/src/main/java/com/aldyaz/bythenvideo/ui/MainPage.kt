@@ -2,6 +2,8 @@ package com.aldyaz.bythenvideo.ui
 
 import android.Manifest
 import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -42,11 +44,12 @@ import dagger.hilt.android.EntryPointAccessors
 @Composable
 fun MainPage() {
     val context = LocalContext.current
+    val activity = context as Activity
     val viewModel: MainViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val entryPoint = remember {
         EntryPointAccessors.fromActivity(
-            context as Activity,
+            activity,
             MainPageEntryPoint::class.java
         )
     }
@@ -82,6 +85,11 @@ fun MainPage() {
         isConnected = isConnected,
         onClickUpload = {
             permissionLauncher.launch(Manifest.permission.CAMERA)
+        },
+        onClickUrlLink = {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(it)
+            activity.startActivity(intent)
         }
     )
 }
@@ -90,13 +98,15 @@ fun MainPage() {
 fun MainScaffold(
     uiState: UploadVideoState,
     isConnected: Boolean,
-    onClickUpload: () -> Unit
+    onClickUpload: () -> Unit,
+    onClickUrlLink: (String) -> Unit
 ) {
     Scaffold { contentPadding ->
         MainContent(
             uiState = uiState,
             isConnected = isConnected,
             onClickUpload = onClickUpload,
+            onClickUrlLink = onClickUrlLink,
             modifier = Modifier.padding(contentPadding)
         )
     }
@@ -107,6 +117,7 @@ fun MainContent(
     uiState: UploadVideoState,
     isConnected: Boolean,
     onClickUpload: () -> Unit,
+    onClickUrlLink: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -145,8 +156,7 @@ fun MainContent(
         if (uiState.progressValue == 100 && !uiState.error) {
             SuccessUploadBottomSheet(
                 url = uiState.uploadVideoPresentationModel.url,
-                onClickUrl = {
-                }
+                onClickUrl = onClickUrlLink
             )
         }
     }
@@ -160,6 +170,7 @@ fun MainScaffoldPreview() {
             progressValue = 10
         ),
         isConnected = true,
-        onClickUpload = {}
+        onClickUpload = {},
+        onClickUrlLink = {}
     )
 }
