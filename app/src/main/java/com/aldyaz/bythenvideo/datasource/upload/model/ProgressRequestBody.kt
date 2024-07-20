@@ -26,13 +26,13 @@ data class ProgressRequestBody(
             var read: Int
             val handler = Handler(Looper.getMainLooper())
             while (fis.read(buffer).also { read = it } != -1) {
-                uploaded += read.toLong()
-                sink.write(buffer, 0, read)
                 handler.post {
                     progressCallback.onProgressUpdate(
                         ((uploaded / fileLength.toDouble()) * 100).toLong()
                     )
                 }
+                uploaded += read.toLong()
+                sink.write(buffer, 0, read)
             }
         }
     }

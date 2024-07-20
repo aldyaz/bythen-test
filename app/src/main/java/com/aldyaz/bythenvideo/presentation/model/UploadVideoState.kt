@@ -7,7 +7,7 @@ data class UploadVideoState(
     val uploadVideoPresentationModel: UploadVideoPresentationModel = UploadVideoPresentationModel()
 ) {
 
-    val uploadEligible = progressValue == null || progressValue == 100
+    val uploadEligible = (progressValue == null || progressValue == 100) && !loading
 
     companion object {
 
