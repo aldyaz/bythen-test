@@ -43,6 +43,7 @@ class MainViewModel @Inject constructor(
     private fun uploadVideo(file: File) = viewModelScope.launch {
         _uiState.update {
             it.copy(
+                loading = true,
                 error = false
             )
         }
@@ -64,6 +65,7 @@ class MainViewModel @Inject constructor(
             is ResultState.Success -> {
                 _uiState.update {
                     it.copy(
+                        loading = false,
                         progressValue = 100,
                         uploadVideoPresentationModel = it.uploadVideoPresentationModel.copy(
                             url = result.data.url
@@ -76,6 +78,7 @@ class MainViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         progressValue = 100,
+                        loading = false,
                         error = true
                     )
                 }

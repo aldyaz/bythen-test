@@ -51,7 +51,7 @@ fun SuccessUploadBottomSheet(
         val annotatedString = buildAnnotatedString {
             if (url.isNotEmpty()) {
                 pushStringAnnotation("url", url)
-                withStyle(style = SpanStyle(Color.Blue)) {
+                withStyle(style = SpanStyle(LocalContentColor.current)) {
                     append(url)
                 }
             } else {

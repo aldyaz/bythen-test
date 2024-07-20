@@ -153,7 +153,7 @@ fun MainContent(
             )
         }
 
-        if (uiState.progressValue == 100 && !uiState.error) {
+        if (uiState.progressValue == 100 && !uiState.loading && !uiState.error) {
             SuccessUploadBottomSheet(
                 url = uiState.uploadVideoPresentationModel.url,
                 onClickUrl = onClickUrlLink

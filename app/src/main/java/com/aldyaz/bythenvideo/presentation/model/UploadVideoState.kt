@@ -1,8 +1,9 @@
 package com.aldyaz.bythenvideo.presentation.model
 
 data class UploadVideoState(
-    val progressValue: Int? = null,
+    val loading: Boolean = false,
     val error: Boolean = false,
+    val progressValue: Int? = null,
     val uploadVideoPresentationModel: UploadVideoPresentationModel = UploadVideoPresentationModel()
 ) {
 
