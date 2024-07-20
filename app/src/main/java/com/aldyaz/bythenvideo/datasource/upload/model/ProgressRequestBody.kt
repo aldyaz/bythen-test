@@ -3,7 +3,6 @@ package com.aldyaz.bythenvideo.datasource.upload.model
 import android.os.Handler
 import android.os.Looper
 import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okio.BufferedSink
@@ -28,7 +27,9 @@ data class ProgressRequestBody(
                 uploaded += read.toLong()
                 sink.write(buffer, 0, read)
                 handler.post {
-                    progressCallback.onProgressUpdate(100 * uploaded / fileLength)
+                    progressCallback.onProgressUpdate(
+                        ((uploaded / fileLength.toDouble()) * 100).toLong()
+                    )
                 }
             }
         }
