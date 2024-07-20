@@ -5,8 +5,10 @@ import android.net.ConnectivityManager
 import com.aldyaz.bythenvideo.BuildConfig
 import com.aldyaz.bythenvideo.datasource.remote.MainInterceptor
 import com.aldyaz.bythenvideo.datasource.upload.UploadVideoService
+import com.aldyaz.bythenvideo.di.qualifier.ChuckerInterceptorQualifier
 import com.aldyaz.bythenvideo.di.qualifier.HttpLoggingInterceptorQualifier
 import com.aldyaz.bythenvideo.di.qualifier.MainInterceptorQualifier
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -44,15 +46,24 @@ class NetworkModule {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
+    @ChuckerInterceptorQualifier
+    @Provides
+    fun provideChuckerInterceptor(
+        @ApplicationContext context: Context
+    ): Interceptor = ChuckerInterceptor.Builder(context)
+        .build()
+
     @Singleton
     @Provides
     fun provideOkHttpClient(
         @MainInterceptorQualifier mainInterceptor: Interceptor,
-        @HttpLoggingInterceptorQualifier loggingInterceptor: Interceptor
+        @HttpLoggingInterceptorQualifier loggingInterceptor: Interceptor,
+        @ChuckerInterceptorQualifier chuckerInterceptor: Interceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(mainInterceptor)
             .addInterceptor(loggingInterceptor)
+            .addInterceptor(chuckerInterceptor)
             .build()
     }
 

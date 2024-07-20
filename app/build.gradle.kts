@@ -91,6 +91,9 @@ dependencies {
     implementation(libs.bundles.coroutines)
     implementation(libs.bundles.net)
 
+    debugImplementation(libs.chucker)
+    releaseImplementation(libs.chucker.noop)
+
     kapt(libs.hilt.compiler)
 
     testImplementation(libs.junit)
