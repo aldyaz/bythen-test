@@ -2,6 +2,7 @@
 
 package com.aldyaz.bythenvideo.ui.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,11 +10,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.NetworkCheck
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -21,16 +25,59 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.aldyaz.bythenvideo.R
 
 @Composable
+fun SuccessUploadBottomSheet(
+    url: String,
+    onClickUrl: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    onDismiss: () -> Unit = {}
+) {
+    InfoBottomSheetDialog(
+        onDismiss = onDismiss,
+        icon = Icons.Filled.CheckCircle,
+        iconTint = Color.Green,
+        modifier = modifier
+    ) {
+        val urlString = buildAnnotatedString {
+            if (url.isNotEmpty()) {
+                pushStringAnnotation("url", url)
+                withStyle(style = SpanStyle(Color.Blue)) {
+                    append(url)
+                }
+            } else {
+                append("-")
+            }
+        }
+
+        Text(text = stringResource(R.string.label_success_upload))
+        Spacer(modifier = Modifier.height(8.dp))
+        ClickableText(
+            text = urlString,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    onClickUrl(url)
+                }
+        ) {
+            onClickUrl(url)
+        }
+    }
+}
+
+@Composable
 fun ApiErrorBottomSheet(
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onDismiss: () -> Unit = {},
 ) {
     InfoBottomSheetDialog(
         onDismiss = onDismiss,
@@ -46,8 +93,8 @@ fun ApiErrorBottomSheet(
 
 @Composable
 fun NetworkIssueBottomSheet(
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onDismiss: () -> Unit = {},
 ) {
     InfoBottomSheetDialog(
         onDismiss = onDismiss,
@@ -65,6 +112,7 @@ fun InfoBottomSheetDialog(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     icon: ImageVector = Icons.Filled.NetworkCheck,
+    iconTint: Color = LocalContentColor.current,
     additionalText: @Composable () -> Unit
 ) {
     val bottomSheetState = rememberModalBottomSheetState()
@@ -78,7 +126,8 @@ fun InfoBottomSheetDialog(
     ) {
         BottomSheetLayout(
             icon = icon,
-            additionalText = additionalText
+            additionalText = additionalText,
+            iconTint = iconTint
         )
     }
 }
@@ -86,6 +135,7 @@ fun InfoBottomSheetDialog(
 @Composable
 private fun BottomSheetLayout(
     icon: ImageVector = Icons.Filled.NetworkCheck,
+    iconTint: Color = LocalContentColor.current,
     additionalText: @Composable () -> Unit
 ) {
     Column(
@@ -98,6 +148,7 @@ private fun BottomSheetLayout(
         Icon(
             imageVector = icon,
             contentDescription = "bottom-sheet-icon",
+            tint = iconTint,
             modifier = Modifier.size(72.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -110,9 +161,15 @@ private fun BottomSheetText(
     title: String,
     description: String
 ) {
-    Text(text = title)
+    Text(
+        text = title,
+        modifier = Modifier.fillMaxWidth()
+    )
     Spacer(modifier = Modifier.height(8.dp))
-    Text(text = description)
+    Text(
+        text = description,
+        modifier = Modifier.fillMaxWidth()
+    )
 }
 
 @Preview

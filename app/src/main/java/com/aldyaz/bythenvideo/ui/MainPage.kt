@@ -32,6 +32,7 @@ import com.aldyaz.bythenvideo.presentation.model.UploadVideoIntent
 import com.aldyaz.bythenvideo.presentation.model.UploadVideoState
 import com.aldyaz.bythenvideo.ui.component.ApiErrorBottomSheet
 import com.aldyaz.bythenvideo.ui.component.NetworkIssueBottomSheet
+import com.aldyaz.bythenvideo.ui.component.SuccessUploadBottomSheet
 import com.aldyaz.bythenvideo.ui.component.UploadPlaceholder
 import com.aldyaz.bythenvideo.utils.createVideoFile
 import com.aldyaz.bythenvideo.utils.getUri
@@ -131,15 +132,21 @@ fun MainContent(
         if (!isConnected) {
             Toast.makeText(LocalContext.current, "Network DISCONNECTED!", Toast.LENGTH_SHORT).show()
             NetworkIssueBottomSheet(
-                onDismiss = {},
                 modifier = Modifier.navigationBarsPadding()
             )
         }
 
         if (uiState.error) {
             ApiErrorBottomSheet(
-                onDismiss = {},
                 modifier = Modifier.navigationBarsPadding()
+            )
+        }
+
+        if (uiState.progressValue == 100 && !uiState.error) {
+            SuccessUploadBottomSheet(
+                url = uiState.uploadVideoPresentationModel.url,
+                onClickUrl = {
+                }
             )
         }
     }

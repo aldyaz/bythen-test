@@ -66,7 +66,7 @@ class MainViewModel @Inject constructor(
                     it.copy(
                         progressValue = 100,
                         uploadVideoPresentationModel = it.uploadVideoPresentationModel.copy(
-                            signature = result.data.signature
+                            url = result.data.url
                         )
                     )
                 }

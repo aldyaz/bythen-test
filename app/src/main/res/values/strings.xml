@@ -9,4 +9,5 @@
     <string name="label_no_internet_connection_description">Check your internet connection, then retry to upload.</string>
     <string name="label_error">Error!</string>
     <string name="label_error_description">An error occured. Please try again</string>
+    <string name="label_success_upload">Success Upload!</string>
 </resources>
