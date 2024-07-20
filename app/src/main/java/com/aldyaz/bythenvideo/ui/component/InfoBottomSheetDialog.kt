@@ -22,7 +22,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -123,9 +122,6 @@ fun InfoBottomSheetDialog(
     additionalText: @Composable () -> Unit
 ) {
     val bottomSheetState = rememberModalBottomSheetState()
-    LaunchedEffect(Unit) {
-        bottomSheetState.expand()
-    }
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = bottomSheetState,

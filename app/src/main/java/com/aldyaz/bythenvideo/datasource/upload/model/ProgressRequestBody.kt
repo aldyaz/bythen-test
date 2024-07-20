@@ -16,6 +16,8 @@ data class ProgressRequestBody(
 
     override fun contentType(): MediaType = MultipartBody.FORM
 
+    override fun contentLength(): Long = file.length()
+
     override fun writeTo(sink: BufferedSink) {
         val fileLength = file.length()
         val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
